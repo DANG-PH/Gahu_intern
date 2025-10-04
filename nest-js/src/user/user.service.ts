@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -12,6 +13,16 @@ export class UserService {
 
   // lưu user (insert hoặc update tùy id)
   async saveUser(user: User): Promise<User> {
+    const existingUser = user.username
+      ? await this.userRepository.findOne({ where: { username: user.username } })
+      : null;
+
+    // 🔐 Chỉ hash nếu là user mới hoặc password bị thay đổi
+    if (!existingUser || user.password !== existingUser.password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(user.password, salt);
+    }
+
     return await this.userRepository.save(user);
   }
 

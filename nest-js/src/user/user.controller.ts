@@ -14,6 +14,7 @@ import {
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { DeTu } from '../detu/detu.entity';
+import * as bcrypt from 'bcrypt';
 
 @Controller('api/auth')
 export class UserController {
@@ -33,8 +34,12 @@ export class UserController {
   @Post('login')
   async login(@Body() user: User): Promise<User> {
     const found = await this.userService.findByUsername(user.username);
-    if (!found || found.password !== user.password) {
-      throw new UnauthorizedException();
+    if (!found) {
+      throw new UnauthorizedException("sai tk mk");
+    }
+    const isMatch = await bcrypt.compare(user.password, found.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('Sai tài khoản hoặc mật khẩu');
     }
     if (!found.daVaoTaiKhoanLanDau) {
       found.daVaoTaiKhoanLanDau = true;
