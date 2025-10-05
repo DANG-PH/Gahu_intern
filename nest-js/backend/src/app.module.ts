@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module'; 
+import { UserModule } from './user/user.module';
 import { ItemModule } from './item/item.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3307,
-      username: 'root',
-      password: 'Phamhaidang112@',
-      database: 'gahu_intern',
+      host: process.env.DB_HOST || 'localhost',   // 👈 lấy từ env
+      port: parseInt(process.env.DB_PORT ?? '3307', 10),
+      username: process.env.DB_USER || 'root',
+      password: process.env.DB_PASS || 'Phamhaidang112@',
+      database: process.env.DB_NAME || 'gahu_intern',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true, // giống Hibernate hbm2ddl.auto
+      synchronize: true,
     }),
     UserModule,
     ItemModule,

@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: Phamhaidang112@
+      DB_NAME: gahu_intern
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: Phamhaidang112@
+      MYSQL_DATABASE: gahu_intern
+    ports:
+      - "3308:3306"   # Local 3308 -> container 3306
